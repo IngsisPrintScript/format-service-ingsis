@@ -1,9 +1,7 @@
 package com.ingsis.format;
 
-import com.ingsis.format.dto.CreateFormatDTO;
-import com.ingsis.format.dto.FormatSnippet;
-import com.ingsis.format.dto.Result;
-import com.ingsis.format.dto.UpdateFormatDTO;
+import com.ingsis.format.dto.*;
+
 import java.util.*;
 
 import org.springframework.http.ResponseEntity;
@@ -42,4 +40,8 @@ public class FormatController {
     return ResponseEntity.ok(result);
   }
 
+  @GetMapping
+  public ResponseEntity<List<GetFormatRule>> getAllRules(@RequestParam String ownerId) {
+    return formatService.getRulesByOwnerId(ownerId);
+  }
 }

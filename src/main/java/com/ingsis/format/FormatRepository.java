@@ -13,4 +13,6 @@ public interface FormatRepository extends JpaRepository<Format, UUID> {
   Format findByNameAndOwnerId(String name, String ownerId);
 
   Format findByOwnerIdAndId(String ownerId, UUID id);
+
+    List<Format> findByOwnerId(String ownerId);
 }

@@ -1,11 +1,13 @@
 package com.ingsis.format;
 
 import com.ingsis.format.dto.CreateFormatDTO;
+import com.ingsis.format.dto.GetFormatRule;
 import com.ingsis.format.dto.Result;
 import com.ingsis.format.dto.UpdateFormatDTO;
 import com.ingsis.format.rules.FormatRule;
 import com.ingsis.format.rules.RuleRegistry;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -109,5 +111,33 @@ public class FormatService {
     Result result = new Result(formattedContent);
     logger.info("Format evaluation completed for owner {}. Final length: {}", ownerId, formattedContent.length());
     return ResponseEntity.ok(result);
+  }
+
+  public ResponseEntity<List<GetFormatRule>> getRulesByOwnerId(String ownerId) {
+    logger.info("Fetching all linting rules for ownerId {}", ownerId);
+
+    try {
+      List<Format> rules = formatRepository.findByOwnerId(ownerId);
+
+      if (rules == null || rules.isEmpty()) {
+        logger.info("No linting rules found for ownerId {}", ownerId);
+        return ResponseEntity.ok(Collections.emptyList());
+      }
+      logger.info("Found {} linting rules for ownerId {}", rules.size(), ownerId);
+      List<GetFormatRule> lintRules = List.copyOf(convertToLintRule(rules));
+      return ResponseEntity.ok(lintRules);
+
+    } catch (Exception e) {
+      logger.error("Error retrieving linting rules for ownerId {}: {}", ownerId, e.getMessage());
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
+  public List<GetFormatRule> convertToLintRule(List<Format> formatRules) {
+    List<GetFormatRule> rules = new ArrayList<>();
+    for(Format format : formatRules){
+      rules.add(new GetFormatRule(format.getId(),format.getName(),format.isActive()));
+    }
+    return rules;
   }
 }
