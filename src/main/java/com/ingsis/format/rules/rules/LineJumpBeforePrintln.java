@@ -14,11 +14,9 @@ public class LineJumpBeforePrintln implements FormatRule {
     try {
       lineJumps = Integer.parseInt(value);
       if (lineJumps < 0) lineJumps = 0;
-    } catch (NumberFormatException ignored) {}
+    } catch (NumberFormatException ignored) {
+    }
 
-    return content.replaceAll(
-            "(?<!\\n)println",
-            "\n".repeat(lineJumps) + "println"
-    ).trim();
+    return content.replaceAll("(?<!\\n)println", "\n".repeat(lineJumps) + "println").trim();
   }
 }

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +34,10 @@ public class FormatService {
       if (rule == null) {
         rule = new Format(ownerId, dto.name(), dto.defaultValue(), dto.active());
         logger.info("Created rule {} for owner {}", dto.name(), ownerId);
-        if (!lints.contains(rule)){
+        if (!lints.contains(rule)) {
           lints.add(rule);
-        }logger.info("Rule {} already declared for owner {}", rule, ownerId);
+        }
+        logger.info("Rule {} already declared for owner {}", rule, ownerId);
       }
       logger.info("rule {} already exists for owner {}", dto.name(), ownerId);
     }
@@ -48,10 +48,8 @@ public class FormatService {
 
   public ResponseEntity<?> updateRule(List<UpdateFormatDTO> updateLintingDTO, String ownerId) {
     for (UpdateFormatDTO dto : updateLintingDTO) {
-      Format result =
-          formatRepository
-              .findByOwnerIdAndId(ownerId,dto.formatId());
-      if(result == null){
+      Format result = formatRepository.findByOwnerIdAndId(ownerId, dto.formatId());
+      if (result == null) {
         logger.info("Rule {} not found for ownerId {}", dto.formatId(), ownerId);
         return ResponseEntity.badRequest().body(dto.formatId() + " not found");
       }
@@ -66,16 +64,16 @@ public class FormatService {
   }
 
   public ResponseEntity<Result> format(String contentData, String ownerId) {
-    List<String> namesToRemove = List.of(
+    List<String> namesToRemove =
+        List.of(
             "jumpAfterSemicolon",
             "indentationSameAsIf",
             "spaceBetweenTokens",
             "spaceBetweenOperator",
-            "keyBracketAlone"
-    );
+            "keyBracketAlone");
 
-    List<Format> rules = formatRepository.findByOwnerIdAndActive(ownerId, true)
-            .stream()
+    List<Format> rules =
+        formatRepository.findByOwnerIdAndActive(ownerId, true).stream()
             .filter(rule -> !namesToRemove.contains(rule.getName()))
             .collect(Collectors.toList());
 
@@ -97,7 +95,8 @@ public class FormatService {
         continue;
       }
 
-      logger.info("Applying rule {} to content (length: {})", format.getName(), formattedContent.length());
+      logger.info(
+          "Applying rule {} to content (length: {})", format.getName(), formattedContent.length());
 
       String newContent = rule.apply(formattedContent, format.getDefaultValue());
 
@@ -109,7 +108,10 @@ public class FormatService {
     }
 
     Result result = new Result(formattedContent);
-    logger.info("Format evaluation completed for owner {}. Final length: {}", ownerId, formattedContent.length());
+    logger.info(
+        "Format evaluation completed for owner {}. Final length: {}",
+        ownerId,
+        formattedContent.length());
     return ResponseEntity.ok(result);
   }
 
