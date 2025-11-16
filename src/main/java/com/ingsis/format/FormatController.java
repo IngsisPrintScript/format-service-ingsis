@@ -1,9 +1,7 @@
 package com.ingsis.format;
 
 import com.ingsis.format.dto.*;
-
 import java.util.*;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,23 +16,24 @@ public class FormatController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<Void> createLintRule(@RequestBody List<CreateFormatDTO> lintingDTO, @RequestParam String ownerId) {
-      formatService.saveRules(lintingDTO, ownerId);
-      return ResponseEntity.ok().build();
+  public ResponseEntity<Void> createLintRule(
+      @RequestBody List<CreateFormatDTO> lintingDTO, @RequestParam String ownerId) {
+    formatService.saveRules(lintingDTO, ownerId);
+    return ResponseEntity.ok().build();
   }
 
   @PutMapping("/update")
-  public ResponseEntity<?> updateLintRule(@RequestBody List<UpdateFormatDTO> updateFormatDTO, @RequestParam String ownerId) {
+  public ResponseEntity<?> updateLintRule(
+      @RequestBody List<UpdateFormatDTO> updateFormatDTO, @RequestParam String ownerId) {
     try {
-      return ResponseEntity.ok(formatService.updateRule(updateFormatDTO,ownerId));
+      return ResponseEntity.ok(formatService.updateRule(updateFormatDTO, ownerId));
     } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }
   }
 
   @PostMapping("/format")
-  public ResponseEntity<Result> formatRules(
-      @RequestBody FormatSnippet evaluateSnippet) {
+  public ResponseEntity<Result> formatRules(@RequestBody FormatSnippet evaluateSnippet) {
     Result result =
         formatService.format(evaluateSnippet.content(), evaluateSnippet.ownerId()).getBody();
     return ResponseEntity.ok(result);
