@@ -137,8 +137,8 @@ public class FormatService {
 
   public List<GetFormatRule> convertToLintRule(List<Format> formatRules) {
     List<GetFormatRule> rules = new ArrayList<>();
-    for(Format format : formatRules){
-      rules.add(new GetFormatRule(format.getId(),format.getName(),format.isActive()));
+    for (Format format : formatRules) {
+      rules.add(new GetFormatRule(format.getId(), format.getName(), format.isActive()));
     }
     return rules;
   }
