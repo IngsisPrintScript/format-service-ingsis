@@ -12,8 +12,10 @@ services:
       - .env
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - snippet-net
 
-  snippet-service:
+  format-service:
     build: .
     container_name: format-service
     ports:
@@ -22,7 +24,13 @@ services:
       - .env
     depends_on:
       - db
+    networks:
+      - snippet-net
 
 volumes:
   db:
   gradle-cache:
+
+networks:
+  snippet-net:
+    external: true
