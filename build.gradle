@@ -5,11 +5,12 @@ plugins {
 	id 'com.diffplug.spotless' version '6.25.0'
 	id 'jacoco'
 	id 'checkstyle'
+	id 'maven-publish'
 }
 
 group = 'com.ingsis'
 version = '0.0.1-SNAPSHOT'
-description = 'Linting Service for Ingsis'
+description = 'Format Service for Ingsis'
 
 java {
 	toolchain {
