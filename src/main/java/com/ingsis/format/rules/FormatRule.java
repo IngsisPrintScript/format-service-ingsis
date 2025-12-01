@@ -1,7 +1,7 @@
 package com.ingsis.format.rules;
 
 public interface FormatRule {
-  String getName();
+    String getName();
 
-  String apply(String code, String value);
+    String apply(String code, String value);
 }

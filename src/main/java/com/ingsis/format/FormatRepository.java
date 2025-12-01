@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FormatRepository extends JpaRepository<Format, UUID> {
-  List<Format> findByOwnerIdAndActive(String ownerId, boolean active);
+    List<Format> findByOwnerIdAndActive(String ownerId, boolean active);
 
-  Format findByNameAndOwnerId(String name, String ownerId);
+    Format findByNameAndOwnerId(String name, String ownerId);
 
-  Format findByOwnerIdAndId(String ownerId, UUID id);
+    Format findByOwnerIdAndId(String ownerId, UUID id);
 
-  List<Format> findByOwnerId(String ownerId);
+    List<Format> findByOwnerId(String ownerId);
 }

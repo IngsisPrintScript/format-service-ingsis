@@ -1,7 +1,12 @@
 package com.ingsis.format;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.ingsis.format.dto.CreateFormatDTO;
 import com.ingsis.format.dto.FormatSnippet;
@@ -15,22 +20,21 @@ import org.springframework.http.ResponseEntity;
 
 class FormatControllerTest {
 
-  private FormatService service;
-  private FormatController controller;
+    private FormatService service;
+    private FormatController controller;
 
-  @BeforeEach
-  void setUp() {
-    service = mock(FormatService.class);
-    controller = new FormatController(service);
-  }
+    @BeforeEach
+    void setUp() {
+        service = mock(FormatService.class);
+        controller = new FormatController(service);
+    }
 
-  @Test
-  void createCallsService() {
-    doReturn(ResponseEntity.ok().build()).when(service).saveRules(anyList(), anyString());
-    ResponseEntity<Void> r =
-        controller.createLintRule(List.of(new CreateFormatDTO("n", "v", true)), "o");
-    assertEquals(200, r.getStatusCodeValue());
-  }
+    @Test
+    void createCallsService() {
+        doReturn(ResponseEntity.ok().build()).when(service).saveRules(anyList(), anyString());
+        ResponseEntity<Void> r = controller.createLintRule(List.of(new CreateFormatDTO("n", "v", true)), "o");
+        assertEquals(200, r.getStatusCodeValue());
+    }
 
   @Test
   void updateReturnsOkWhenServiceOk() {
@@ -57,12 +61,12 @@ class FormatControllerTest {
     assertNull(r.getBody());
   }
 
-  @Test
-  void createLintRuleHandlesNullList() {
-    doReturn(ResponseEntity.ok().build()).when(service).saveRules(anyList(), anyString());
-    ResponseEntity<Void> r = controller.createLintRule(List.of(), "o");
-    assertEquals(200, r.getStatusCodeValue());
-  }
+    @Test
+    void createLintRuleHandlesNullList() {
+        doReturn(ResponseEntity.ok().build()).when(service).saveRules(anyList(), anyString());
+        ResponseEntity<Void> r = controller.createLintRule(List.of(), "o");
+        assertEquals(200, r.getStatusCodeValue());
+    }
 
   @Test
   void formatRoutesToService() {

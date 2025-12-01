@@ -25,68 +25,52 @@ import org.springframework.stereotype.Component;
 @Profile("!test")
 public class FormatRequestConsumer extends RedisStreamConsumer<String> {
 
-  private static final Logger logger = LoggerFactory.getLogger(FormatRequestConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(FormatRequestConsumer.class);
 
-  private final FormatService formatService;
-  private final FormatResultProducer formatResultProducer;
-  private final ObjectMapper objectMapper;
-  private final ExecutorService executor = Executors.newFixedThreadPool(10);
+    private final FormatService formatService;
+    private final FormatResultProducer formatResultProducer;
+    private final ObjectMapper objectMapper;
+    private final ExecutorService executor = Executors.newFixedThreadPool(10);
 
-  public FormatRequestConsumer(
-      @Value("${redis.streams.formatRequest}") String streamName,
-      @Value("${redis.groups.format}") String groupName,
-      RedisTemplate<String, String> redisTemplate,
-      FormatService formatService,
-      FormatResultProducer formatResultProducer,
-      ObjectMapper objectMapper) {
+    public FormatRequestConsumer(@Value("${redis.streams.formatRequest}") String streamName,
+            @Value("${redis.groups.format}") String groupName, RedisTemplate<String, String> redisTemplate,
+            FormatService formatService, FormatResultProducer formatResultProducer, ObjectMapper objectMapper) {
 
-    super(streamName, groupName, redisTemplate);
-    this.formatService = formatService;
-    this.formatResultProducer = formatResultProducer;
-    this.objectMapper = objectMapper;
-  }
+        super(streamName, groupName, redisTemplate);
+        this.formatService = formatService;
+        this.formatResultProducer = formatResultProducer;
+        this.objectMapper = objectMapper;
+    }
 
-  @Override
-  public void onMessage(@NotNull ObjectRecord<String, String> record) {
-    executor.submit(
-        () -> {
-          try {
-            LintRequestEvent event =
-                objectMapper.readValue(record.getValue(), LintRequestEvent.class);
-            logger.info(
-                "Processing lint request for Snippet({}) from User({})",
-                event.snippetId().toString(),
-                event.ownerId());
+    @Override
+    public void onMessage(@NotNull ObjectRecord<String, String> record) {
+        executor.submit(() -> {
+            try {
+                LintRequestEvent event = objectMapper.readValue(record.getValue(), LintRequestEvent.class);
+                logger.info("Processing lint request for Snippet({}) from User({})", event.snippetId().toString(),
+                        event.ownerId());
 
-            ResponseEntity<Result> response =
-                formatService.format(event.content(), event.ownerId());
-            Result results = response.getBody();
-            FormatStatus status = (results != null) ? FormatStatus.PASSED : FormatStatus.FAILED;
+                ResponseEntity<Result> response = formatService.format(event.content(), event.ownerId());
+                Result results = response.getBody();
+                FormatStatus status = (results != null) ? FormatStatus.PASSED : FormatStatus.FAILED;
 
-            formatResultProducer.publish(
-                new FormatResultEvent(
-                    event.ownerId(),
-                    event.snippetId(),
-                    status,
-                    results == null ? "" : results.content()));
-          } catch (Exception ex) {
-            logger.error("Error processing lint request: {}", ex.getMessage());
-          }
-          return null;
+                formatResultProducer.publish(new FormatResultEvent(event.ownerId(), event.snippetId(), status,
+                        results == null ? "" : results.content()));
+            } catch (Exception ex) {
+                logger.error("Error processing lint request: {}", ex.getMessage());
+            }
+            return null;
         });
-  }
+    }
 
-  @Override
-  public @NotNull StreamReceiver.StreamReceiverOptions<String, ObjectRecord<String, String>>
-      options() {
-    return StreamReceiver.StreamReceiverOptions.builder()
-        .pollTimeout(java.time.Duration.ofSeconds(10))
-        .targetType(String.class)
-        .build();
-  }
+    @Override
+    public @NotNull StreamReceiver.StreamReceiverOptions<String, ObjectRecord<String, String>> options() {
+        return StreamReceiver.StreamReceiverOptions.builder().pollTimeout(java.time.Duration.ofSeconds(10))
+                .targetType(String.class).build();
+    }
 
-  @PreDestroy
-  public void shutdown() {
-    executor.shutdown();
-  }
+    @PreDestroy
+    public void shutdown() {
+        executor.shutdown();
+    }
 }
