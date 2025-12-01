@@ -11,3 +11,4 @@
         <setting id="org.eclipse.jdt.core.formatter.insert_space_after_opening_brace_in_array_initializer" value="true"/>
     </profile>
 </profiles>
+

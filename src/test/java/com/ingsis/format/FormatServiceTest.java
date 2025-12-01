@@ -37,22 +37,22 @@ class FormatServiceTest {
         service = new FormatService(registry, repo);
     }
 
-  @Test
-  void saveRulesCreatesNewOnes() {
-    when(repo.findByNameAndOwnerId(anyString(), anyString())).thenReturn(null);
-    List<CreateFormatDTO> dtos = List.of(new CreateFormatDTO("a", "v", true));
-    ResponseEntity<Void> r = service.saveRules(dtos, "own");
-    assertEquals(200, r.getStatusCodeValue());
-    verify(repo).saveAll(anyList());
-  }
+    @Test
+    void saveRulesCreatesNewOnes() {
+        when(repo.findByNameAndOwnerId(anyString(), anyString())).thenReturn(null);
+        List<CreateFormatDTO> dtos = List.of(new CreateFormatDTO("a", "v", true));
+        ResponseEntity<Void> r = service.saveRules(dtos, "own");
+        assertEquals(200, r.getStatusCodeValue());
+        verify(repo).saveAll(anyList());
+    }
 
-  @Test
-  void updateRuleNotFoundReturnsBadRequest() {
-    when(repo.findByOwnerIdAndId(anyString(), any(UUID.class))).thenReturn(null);
-    UpdateFormatDTO dto = new UpdateFormatDTO(UUID.randomUUID(), "x", true);
-    ResponseEntity<?> r = service.updateRule(List.of(dto), "o");
-    assertEquals(400, r.getStatusCodeValue());
-  }
+    @Test
+    void updateRuleNotFoundReturnsBadRequest() {
+        when(repo.findByOwnerIdAndId(anyString(), any(UUID.class))).thenReturn(null);
+        UpdateFormatDTO dto = new UpdateFormatDTO(UUID.randomUUID(), "x", true);
+        ResponseEntity<?> r = service.updateRule(List.of(dto), "o");
+        assertEquals(400, r.getStatusCodeValue());
+    }
 
     @Test
     void updateRuleFoundSavesAndReturnsOk() {
@@ -75,13 +75,13 @@ class FormatServiceTest {
         verify(repo).save(argThat(saved -> saved.getDefaultValue().equals("newVal") && saved.isActive()));
     }
 
-  @Test
-  void getRulesByOwnerIdEmpty() {
-    when(repo.findByOwnerId(anyString())).thenReturn(List.of());
-    ResponseEntity<List<GetFormatRule>> r = service.getRulesByOwnerId("o");
-    assertEquals(200, r.getStatusCodeValue());
-    assertTrue(r.getBody().isEmpty());
-  }
+    @Test
+    void getRulesByOwnerIdEmpty() {
+        when(repo.findByOwnerId(anyString())).thenReturn(List.of());
+        ResponseEntity<List<GetFormatRule>> r = service.getRulesByOwnerId("o");
+        assertEquals(200, r.getStatusCodeValue());
+        assertTrue(r.getBody().isEmpty());
+    }
 
     @Test
     void convertToLintRuleCreatesRecords() {
@@ -91,12 +91,12 @@ class FormatServiceTest {
         assertEquals("n", l.get(0).name());
     }
 
-  @Test
-  void getRulesByOwnerIdHandlesRepositoryException() {
-    when(repo.findByOwnerId(anyString())).thenThrow(new RuntimeException("boom"));
-    ResponseEntity<List<GetFormatRule>> r = service.getRulesByOwnerId("o");
-    assertEquals(500, r.getStatusCodeValue());
-  }
+    @Test
+    void getRulesByOwnerIdHandlesRepositoryException() {
+        when(repo.findByOwnerId(anyString())).thenThrow(new RuntimeException("boom"));
+        ResponseEntity<List<GetFormatRule>> r = service.getRulesByOwnerId("o");
+        assertEquals(500, r.getStatusCodeValue());
+    }
 
     @Test
     void formatUsesRulesAndReturnsResult() {
