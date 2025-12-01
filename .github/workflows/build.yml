@@ -57,7 +57,7 @@ jobs:
           docker build \
             --build-arg GITHUB_USER=${{ github.actor }} \
             --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-            -t ghcr.io/ingsisprintscript/FormatService:dev .
+            -t ghcr.io/ingsisprintscript/format-service:dev .
 
       - name: Push Docker image
-        run: docker push ghcr.io/ingsisprintscript/FormatService:dev
+        run: docker push ghcr.io/ingsisprintscript/format-service:dev
