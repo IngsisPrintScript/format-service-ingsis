@@ -38,27 +38,27 @@ class FormatControllerTest {
 
   @Test
   void updateReturnsOkWhenServiceOk() {
-    when(service.updateRule(anyList(), anyString())).thenReturn(ResponseEntity.ok().build());
-    ResponseEntity<?> r =
-        controller.updateLintRule(List.of(new UpdateFormatDTO(UUID.randomUUID(), "v", true)), "o");
-    assertEquals(200, r.getStatusCodeValue());
+        when(service.updateRule(anyList(), anyString())).thenReturn(ResponseEntity.ok().build());
+        ResponseEntity<?> r =
+            controller.updateLintRule(List.of(new UpdateFormatDTO(UUID.randomUUID(), "v", true)), "o");
+        assertEquals(200, r.getStatusCodeValue());
   }
 
   @Test
   void updateHandlesServiceException() {
-    when(service.updateRule(anyList(), anyString())).thenThrow(new RuntimeException("boom"));
-    ResponseEntity<?> r =
-        controller.updateLintRule(List.of(new UpdateFormatDTO(UUID.randomUUID(), "v", true)), "o");
-    assertEquals(400, r.getStatusCodeValue());
+        when(service.updateRule(anyList(), anyString())).thenThrow(new RuntimeException("boom"));
+        ResponseEntity<?> r =
+            controller.updateLintRule(List.of(new UpdateFormatDTO(UUID.randomUUID(), "v", true)), "o");
+        assertEquals(400, r.getStatusCodeValue());
   }
 
   @Test
   void updateHandlesNullFromService() {
-    when(service.updateRule(anyList(), anyString())).thenReturn(null);
-    ResponseEntity<?> r =
-        controller.updateLintRule(List.of(new UpdateFormatDTO(UUID.randomUUID(), "v", true)), "o");
-    assertEquals(200, r.getStatusCodeValue());
-    assertNull(r.getBody());
+        when(service.updateRule(anyList(), anyString())).thenReturn(null);
+        ResponseEntity<?> r =
+            controller.updateLintRule(List.of(new UpdateFormatDTO(UUID.randomUUID(), "v", true)), "o");
+        assertEquals(200, r.getStatusCodeValue());
+        assertNull(r.getBody());
   }
 
     @Test
@@ -70,16 +70,16 @@ class FormatControllerTest {
 
   @Test
   void formatRoutesToService() {
-    when(service.format(anyString(), anyString())).thenReturn(ResponseEntity.ok(new Result("x")));
-    ResponseEntity<Result> r = controller.formatRules(new FormatSnippet("c", "o"));
-    assertEquals(200, r.getStatusCodeValue());
-    assertEquals("x", r.getBody().content());
+        when(service.format(anyString(), anyString())).thenReturn(ResponseEntity.ok(new Result("x")));
+        ResponseEntity<Result> r = controller.formatRules(new FormatSnippet("c", "o"));
+        assertEquals(200, r.getStatusCodeValue());
+        assertEquals("x", r.getBody().content());
   }
 
   @Test
   void getAllRulesDelegates() {
-    when(service.getRulesByOwnerId("o")).thenReturn(ResponseEntity.ok(List.of()));
-    ResponseEntity<List<com.ingsis.format.dto.GetFormatRule>> r = controller.getAllRules("o");
-    assertEquals(200, r.getStatusCodeValue());
+        when(service.getRulesByOwnerId("o")).thenReturn(ResponseEntity.ok(List.of()));
+        ResponseEntity<List<com.ingsis.format.dto.GetFormatRule>> r = controller.getAllRules("o");
+        assertEquals(200, r.getStatusCodeValue());
   }
 }
